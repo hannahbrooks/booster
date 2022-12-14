@@ -215,7 +215,7 @@ describe('Project', () => {
     const cartDemoMochaRcContent = fileContents('.mocharc.yml')
     expect(cartDemoMochaRcContent).to.equal(expectedCartDemoMochaRc)
 
-    const defaults = flags?.includes('--default')
+    const defaults = !flags?.includes('--interactive')
     const expectedCartDemoPackageJson = loadFixture('cart-demo/package.json', [
       ['project_name_placeholder', projectName],
       ['description_placeholder', defaults ? '' : DESCRIPTION],
@@ -282,7 +282,7 @@ describe('Project', () => {
 
       context('with default parameters', async () => {
         const projectName = 'cart-demo-default'
-        const flags = ['--default', '--skipInstall']
+        const flags = ['--skipInstall', '--providerPackageName', PROVIDER]
         let output: { stdout: string; stderr: string }
 
         before(async () => {
@@ -321,7 +321,7 @@ describe('Project', () => {
       it('initializes a git repo', async () => {
         const projectName = 'cart-demo-with-git'
         // We skip dependencies installation to make the test faster
-        const flags = ['--default', '--skipInstall']
+        const flags = ['--skipInstall', '--providerPackageName', 'default']
 
         await execNewProject(projectName, flags)
       }).timeout(TEST_TIMEOUT)
@@ -340,7 +340,7 @@ describe('Project', () => {
           provider: 'default', // Just "hit enter" to choose the default one
         }
         // We skip dependencies and git installation to make this test faster
-        const output = await execNewProject(projectName, ['--skipInstall', '--skipGit'], promptAnswers)
+        const output = await execNewProject(projectName, ['--interactive', '--skipInstall', '--skipGit'], promptAnswers)
 
         await assertions(output, projectName)
       }).timeout(TEST_TIMEOUT)
@@ -357,7 +357,7 @@ describe('Project', () => {
           provider: PROVIDER,
         }
         // We skip dependencies and git installation to make this test faster
-        const output = await execNewProject(projectName, ['--skipInstall', '--skipGit'], promptAnswers)
+        const output = await execNewProject(projectName, ['--interactive', '--skipInstall', '--skipGit'], promptAnswers)
 
         await assertions(output, projectName)
       }).timeout(TEST_TIMEOUT)
